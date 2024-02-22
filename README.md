@@ -5,7 +5,7 @@ We want to build a service that matches text queries to images that depict seman
 
 ## Text-image similarity with CLIP
 
-One of the most popular models for learning visual concepts from natural language was created by OpenAI researchers and is called CLIP (Contrastive Language–Image Pre-training). The key idea is to learn common reprensentations by training two transformer-based encoder models on a large dataset of image-text pairs. The contrastive pre-training combined with the scaled up dataset results in a strong represenetation ability of both models.
+One of the most popular models for learning visual concepts from natural language was created by OpenAI researchers and is called CLIP (Contrastive Language–Image Pre-training). The key idea is to learn common representations by training two transformer-based encoder models on a large dataset of image-text pairs. The contrastive pre-training combined with the scaled up dataset results in a strong representation ability of both models.
 
 ![Pretraining](https://images.openai.com/blob/fbc4f633-9ad4-4dc2-bd94-0b6f1feee22f/overview-a.svg)
 
@@ -19,7 +19,7 @@ The solution uses the transformers library by Hugging Face with `openai/clip-vit
 
 ### Architecture
 
-The backend is implemented using a FastAPI app encapsulating a python service layer. That service layer implements the model inference which generates the embeddings for images and query texts. The FastAPI app exposes a a single endpoint that expects a string and returns the corresponding image from the Qdrant instance.
+The backend is implemented using a FastAPI app encapsulating a python service layer. The service layer implements the model inference which generates the embeddings for images and query texts. The FastAPI app exposes a a single endpoint that expects a string and returns the corresponding image from the Qdrant instance.
 
 ![Architecture](./assets/arch.png)
 
@@ -94,9 +94,9 @@ Given the label structure described above one can then perform retrievals on a h
 
 ## Possible improvements
 
-A simple improvement would be the extension of the query endpoint to accept the number of images to be returned. This would be helpful when evaluating on a dataset for differen `K`.
+A simple improvement would be the extension of the query endpoint to accept the number of images to be returned. This would be helpful when evaluating on a dataset for different `K`. In a production setting one would also add more query validation and error handling.
 
-Currently images are stored as a base64 string in the payload of each point in a Qdrant collection. Depending on the deployment setting this can have negative consequences on the performance of the database as the images create a huge memory overhead. Instead one could store the image artefacts in an object store with a unique ID and add the ID to payload when adding a new entry to a Qdrant collection. However this can create other drawbacks such as implementation overhead and retrieval latency from the object store.
+Currently images are stored as a base64 string in the payload of each point in a Qdrant collection. Depending on the deployment setting this can have negative consequences on the performance of the database as the images create a huge memory overhead. Instead one could store the image artefacts in an object store (such as `S3`) with a unique ID and add the ID to payload when adding a new entry to a Qdrant collection. However this can create other drawbacks such as implementation overhead and retrieval latency from the object store.
 
-Another option to improve retrieval latency is to add a caching layer. When inference servers such as NVIDIA Triton, the implementation of such caching is straight forward.
+Another option to improve retrieval latency is to add a caching layer. When using inference servers such as NVIDIA Triton, the implementation of such caching is straight forward.
 
